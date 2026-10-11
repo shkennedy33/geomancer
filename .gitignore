@@ -1,0 +1,8 @@
+build/
+.venv/
+renders/
+samples/dirt/
+external/pluginval/
+# separate project with its own repo (Aeromancer) and its worktree
+aeromancer/
+aero-stable/
