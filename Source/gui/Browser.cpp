@@ -106,8 +106,16 @@ void Browser::buildPlaces()
 {
     places.clear();
     places.push_back ({ "Home", juce::File::getSpecialLocation (juce::File::userHomeDirectory), false });
+   #if JUCE_LINUX
     places.push_back ({ "/  (root)", juce::File ("/"), false });
-    // Drives come from the mount table, not by probing folders: stat-ing an automount point
+   #endif
+   #if ! JUCE_LINUX
+    juce::Array<juce::File> roots; // Windows: C:\, D:\ ...  macOS: / and every /Volumes/* disk
+    juce::File::findFileSystemRoots (roots);
+    if (juce::File ("/Volumes").isDirectory()) roots.addArray (juce::File ("/Volumes").findChildFiles (juce::File::findDirectories, false));
+    for (auto& r : roots) places.push_back ({ r.getFullPathName(), r, false });
+   #endif
+    // Linux: drives come from the mount table, not by probing folders: stat-ing an automount point
     // (e.g. a CIFS share whose machine is offline) can freeze the UI for seconds.
     juce::StringArray seen;
     juce::StringArray lines;
@@ -123,7 +131,7 @@ void Browser::buildPlaces()
         const bool network = f[2] == "autofs" || f[2].startsWith ("cifs") || f[2].startsWith ("nfs") || f[2].startsWith ("fuse.sshfs");
         places.push_back ({ mp + (network ? "  (network)" : ""), juce::File (mp), false });
     }
-    std::sort (places.begin() + 2, places.end(), [] (const Place& a, const Place& b) { return a.name.compareNatural (b.name) < 0; });
+    std::sort (places.begin() + std::min<int> (2, (int) places.size()), places.end(), [] (const Place& a, const Place& b) { return a.name.compareNatural (b.name) < 0; });
     for (auto& f : favourites())
         places.push_back ({ juce::File (f).getFileName(), juce::File (f), true });
     placeList.updateContent();

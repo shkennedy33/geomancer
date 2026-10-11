@@ -8,6 +8,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+option(GEOMANCER_COPY_AFTER_BUILD "copy the plugin into the user plugin folder after building" ON)
 add_subdirectory(external/JUCE)
 
 juce_add_plugin(Geomancer
@@ -16,13 +17,14 @@ juce_add_plugin(Geomancer
     PLUGIN_CODE Gmcr
     PRODUCT_NAME "Geomancer"
     DESCRIPTION "Drum sampler + step sequencer"
-    FORMATS VST3 Standalone
+    FORMATS VST3 AU Standalone
     IS_SYNTH TRUE
     NEEDS_MIDI_INPUT TRUE
     NEEDS_MIDI_OUTPUT TRUE
     IS_MIDI_EFFECT FALSE
     EDITOR_WANTS_KEYBOARD_FOCUS TRUE
-    COPY_PLUGIN_AFTER_BUILD TRUE
+    COPY_PLUGIN_AFTER_BUILD ${GEOMANCER_COPY_AFTER_BUILD}
+    AU_MAIN_TYPE kAudioUnitType_MusicDevice
     VST3_CATEGORIES Instrument Drum Sampler)
 
 target_sources(Geomancer PRIVATE
@@ -65,8 +67,12 @@ target_link_libraries(Geomancer
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
 
-target_compile_options(Geomancer PRIVATE $<$<CONFIG:Release>:-O3>)
+if(NOT MSVC)
+    target_compile_options(Geomancer PRIVATE $<$<CONFIG:Release>:-O3>)
+endif()
 
+option(GEOMANCER_TESTS "build the gm_test harness" ON)
+if(GEOMANCER_TESTS)
 # ---- test harness: engine checks in-process, GUI snapshots, and a smoke test of the built VST3 ----
 get_target_property(GM_SOURCES Geomancer SOURCES)
 list(FILTER GM_SOURCES INCLUDE REGEX "^Source/")
@@ -84,4 +90,5 @@ target_link_libraries(gm_test PRIVATE
     juce::juce_audio_processors
     juce::juce_dsp
     PUBLIC juce::juce_recommended_config_flags)
-target_compile_options(gm_test PRIVATE -O2)
+target_compile_options(gm_test PRIVATE $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-O2>)
+endif()
