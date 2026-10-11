@@ -6,7 +6,7 @@ Works as a plugin in REAPER (or most other music programs) and as a standalone a
 
 ![Geomancer](shots/ui.png)
 
-## Install it (no programming needed)
+## Install it
 
 1. Open the **[Releases page](../../releases/latest)** and download the zip for your computer:
    **Windows**, **macOS** or **Linux**.
