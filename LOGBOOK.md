@@ -120,3 +120,9 @@ function generators).
 - Git: repo initialised at /mnt/fast/projects/VST (branch main) → private github.com/shkennedy33/geomancer.
   JUCE is a submodule (external/JUCE @ be29c81, 9.0.3). Ignored: build/, .venv/, renders/, samples/dirt/,
   external/pluginval/, and aeromancer/ + aero-stable/ (a separate plugin with its own repo).
+- 2026-10-11: CI (.github/workflows/build.yml) builds Windows (MSVC), macOS (universal, + AU) and Linux
+  (ubuntu-22.04 for old glibc) zips; tag v* → GitHub Release. All 3 built first try; the Ubuntu-built
+  Linux VST3 passes `gm_test vst3` on gandiva. CMake options GEOMANCER_TESTS / GEOMANCER_COPY_AFTER_BUILD.
+  Browser lists findFileSystemRoots + /Volumes on non-Linux. README rewritten noob-first (install table,
+  macOS xattr -cr / SmartScreen notes, "first five minutes"); dev stuff moved to the bottom.
+  Builds are unsigned (no Apple notarization / Windows code signing).
