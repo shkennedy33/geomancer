@@ -117,3 +117,6 @@ function generators).
   FX straight to main out. Leaving the BROWSE tab stops it.
 - Tests: guitest now covers hidden steps, bracket drag, ruler lengths, folder-with-readme drop, editor
   drop, browser listing/audition/Enter-load. All suites + REAPER e2e + pluginval 8 green.
+- Git: repo initialised at /mnt/fast/projects/VST (branch main) → private github.com/shkennedy33/geomancer.
+  JUCE is a submodule (external/JUCE @ be29c81, 9.0.3). Ignored: build/, .venv/, renders/, samples/dirt/,
+  external/pluginval/, and aeromancer/ + aero-stable/ (a separate plugin with its own repo).
